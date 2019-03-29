@@ -4,9 +4,10 @@ from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 data = pd.read_csv("data/cardio_1dp.csv")
+test = pd.read_csv("data/new_cardio.csv")
 
-x,y = data.iloc[:,:-1], data.iloc[:,-1]
-x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2)
+x_train,y_train = data.iloc[:,:-1], data.iloc[:,-1]
+x_test,y_test = test.iloc[:,:-1], test.iloc[:,-1]
 
 for title, reg in [("linear regression",LinearRegression()),("ridge",Ridge()),("lasso",Lasso()),("elastic net", ElasticNet())]: 
     reg.fit(x_train, y_train)

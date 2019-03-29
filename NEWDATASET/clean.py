@@ -21,12 +21,28 @@ for row in data.values:
     else:
         d[x][y] += 1
 
+d = [(k,d[k]) for k in d]
 
-FILENAME = f"data/cardio_{DECIMAL_PLACE}dp.csv"
-with open(FILENAME,"w") as f:
-    f.write(",".join(data.columns)+"\n")
-    for k in d:
-        a,b = d[k]
-        score = str(b/(a+b))
-        f.write(",".join([str(i) for i in k])+","+score+"\n")
+def score(tup):
+    a,b = tup
+    return (1+abs(a-b))/(a+b)
+d.sort(key=lambda x:score(x[1]))
+
+for a,b in d[:5]:
+    print(a,b)
+
+
+
+
+
+
+
+# WRITING TO NEW DATABASE
+# FILENAME = f"data/cardio_{DECIMAL_PLACE}dp.csv"
+# with open(FILENAME,"w") as f:
+#     f.write(",".join(data.columns)+"\n")
+#     for k in d:
+#         a,b = d[k]
+#         score = str(b/(a+b))
+#         f.write(",".join([str(i) for i in k])+","+score+"\n")
         

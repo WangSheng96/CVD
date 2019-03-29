@@ -19,6 +19,7 @@ from sklearn.svm import SVC
 from sklearn import metrics
 
 for i in C:
+    print(i)
     classifier = SVC(kernel='rbf', C=i, decision_function_shape='ovr', gamma="scale")
     classifier.fit(X_train, y_train)
     y_pred = classifier.predict(X_test)

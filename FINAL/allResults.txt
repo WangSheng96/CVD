@@ -57,6 +57,11 @@ CLASSIFICATION USING REGRESSION ON NEW DATASET
             elastic net alpha = 0.001 l1_ratio = 0.9  {'accuracy score:': 0.729, 'precision score:': 0.7493, 'recall score:': 0.6789, 'f1 score:': 0.7124}
 
     2) NuSVR
+        (nu)
+        0.3                             {'accuracy': 0.6826, 'precision': 0.6842, 'recall': 0.6644, 'f1 score': 0.6742}
+        0.5                             {'accuracy': 0.7309, 'precision': 0.7304, 'recall': 0.7221, 'f1 score': 0.7262}
+        0.7                             {'accuracy': 0.7298, 'precision': 0.7232, 'recall': 0.7346, 'f1 score': 0.7289}
+        0.9                             {'accuracy': 0.7293, 'precision': 0.7223, 'recall': 0.735, 'f1 score': 0.7286}
 
 
 

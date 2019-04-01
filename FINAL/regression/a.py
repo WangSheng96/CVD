@@ -3,7 +3,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import pickle
 from time import time
-from helper import *
 from random import random as ran
 
 t = [time()]

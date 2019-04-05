@@ -179,3 +179,65 @@ file.writelines("Presc:\t"+str(knn_precision[best_index])+ "\n")
 file.writelines("F1:\t"+str(knn_fl_score[best_index])+ "\n")
 file.writelines("=========\n")
 file.close()
+
+#LOGISTIC REGRESSION
+
+log_score = []
+log_recall = []
+log_precision = []
+log_fl_score = []
+
+from sklearn import linear_model
+
+for i in C:
+    
+    log_c_score = []
+    log_c_recall = []
+    log_c_precision = []
+    log_c_fl_score = []
+    
+    for train_index, test_index in kfold.split(X, y):
+    
+        X_train = X.iloc[train_index][:1000]
+        y_train = y.iloc[train_index][:1000]
+        X_test = X.iloc[test_index]
+        y_test = y.iloc[test_index]
+        
+        classifier = linear_model.LogisticRegression(solver = 'liblinear')
+        classifier.fit(X_train, y_train)
+        y_pred = classifier.predict(X_test)
+        
+        log_c_score.append(classifier.score(X_test, y_test))
+        log_c_recall.append(metrics.recall_score(y_test, y_pred))
+        log_c_precision.append(metrics.precision_score(y_test, y_pred))
+        log_c_fl_score.append(metrics.f1_score(y_test, y_pred))
+        
+    log_score.append(np.mean(log_c_score))
+    log_recall.append(np.mean(log_c_recall))
+    log_precision.append(np.mean(log_c_precision))
+    log_fl_score.append(np.mean(log_c_fl_score))
+
+    
+print("")
+print("=================Results=================")
+print("C=\t",C)
+print("Score:\t",[str(round(i*100,2)) + "%" for i in log_score])
+print("Recall:\t",[str(round(i*100,2)) + "%" for i in log_recall])
+print("Presc:\t",[str(round(i*100,2)) + "%" for i in log_precision])
+print("F1:\t",[str(round(i*100,2)) + "%" for i in log_fl_score])
+print("")
+best_index = np.argmax(log_score)
+print("Best C:",C[np.argmax(log_recall)])
+print("Score:",round(log_score[best_index]*100,2))
+print("Recall:",round(log_recall[best_index]*100,2))
+print("Prec:",round(log_precision[best_index]*100,2))
+print("F1:",round(log_fl_score[best_index]*100,2))
+
+file = open(filename, "a")
+file.writelines("===kNN===\n")
+file.writelines("Score:\t"+str(log_score[best_index]) + "\n")
+file.writelines("Recall:\t"+str(log_recall[best_index])+ "\n")
+file.writelines("Presc:\t"+str(log_precision[best_index])+ "\n")
+file.writelines("F1:\t"+str(log_fl_score[best_index])+ "\n")
+file.writelines("=========\n")
+file.close()

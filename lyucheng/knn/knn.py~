@@ -15,7 +15,7 @@ for file_name in file_list:
     f1_scores = {}
     precision_scores = {}
     score_scores = {}
-    for k in range(1, 51):
+    for k in range(1, 101):
         print("processing", k)
         neigh = KNeighborsClassifier(n_neighbors=k)
         kf = KFold(n_splits=5)

@@ -14,5 +14,6 @@ for i in range(100,1000,100):
     ypred_bst = ypred_bst.astype(int)
     print("i: ",i)
     print("accuracy:", metrics.accuracy_score(y_test,ypred_bst))
+    print("precision:", metrics.precision_score(y_test, ypred_bst))
     print("recall", metrics.recall_score(y_test,ypred_bst))
     print("f1", metrics.f1_score(y_test,ypred_bst))

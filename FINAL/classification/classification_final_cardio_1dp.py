@@ -4,6 +4,7 @@ import numpy as np
 filename = "cardio_1dp.csv"
 
 data = pd.read_csv(filename)
+data_test = pd.read_csv("new_cardio.csv")
 data.iloc[:,-1] = [1 if i>0.5 else 0 for i in data.iloc[:,-1]]
 
 filename = "cardio_1dp_result.txt"
@@ -11,9 +12,10 @@ filename = "cardio_1dp_result.txt"
 X = data.iloc[:,:-1]
 y = data.iloc[:,-1]
 
+X_test = data_test.iloc[:,:-1]
+y_test = data_test.iloc[:,-1]
+
 from sklearn import metrics
-from sklearn.model_selection import StratifiedKFold
-kfold = StratifiedKFold(n_splits = 10, shuffle = True, random_state = 2019)
 
 #C for regularization
 C = [0.001,0.01,0.1,1,10,100,1000,10000]
@@ -28,32 +30,18 @@ from sklearn.svm import SVC
 
 for i in C:
     
-    svm_c_score = []
-    svm_c_recall = []
-    svm_c_precision = []
-    svm_c_fl_score = []
+    #TRAINING
+    classifier = SVC(kernel='rbf', C=i, decision_function_shape='ovr', gamma="scale")
+    classifier.fit(X, y)
     
-    for train_index, test_index in kfold.split(X, y):
+    #TESTING
+    y_pred = classifier.predict(X_test)
     
-        X_train = X.iloc[train_index][:1000]
-        y_train = y.iloc[train_index][:1000]
-        X_test = X.iloc[test_index]
-        y_test = y.iloc[test_index]
+    svm_score.append(classifier.score(X_test, y_test))
+    svm_recall.append(metrics.recall_score(y_test, y_pred))
+    svm_precision.append(metrics.precision_score(y_test, y_pred))
+    svm_fl_score.append(metrics.f1_score(y_test, y_pred))
     
-        classifier = SVC(kernel='rbf', C=i, decision_function_shape='ovr', gamma="scale")
-        classifier.fit(X_train, y_train)
-        y_pred = classifier.predict(X_test)
-        
-        svm_c_score.append(classifier.score(X_test, y_test))
-        svm_c_recall.append(metrics.recall_score(y_test, y_pred))
-        svm_c_precision.append(metrics.precision_score(y_test, y_pred))
-        svm_c_fl_score.append(metrics.f1_score(y_test, y_pred))
-        
-    svm_score.append(np.mean(svm_c_score))
-    svm_recall.append(np.mean(svm_c_recall))
-    svm_precision.append(np.mean(svm_c_precision))
-    svm_fl_score.append(np.mean(svm_c_fl_score))
-
     
 print("")
 print("=================Results=================")
@@ -65,8 +53,8 @@ print("F1:\t",[str(round(i*100,2)) + "%" for i in svm_fl_score])
 print("")
 best_index = np.argmax(svm_score)
 print("Best C:",C[np.argmax(svm_score)])
-print("Score:",round(svm_score[best_index]*100,2))
 print("Recall:",round(svm_recall[best_index]*100,2))
+print("Score:",round(svm_score[best_index]*100,2))
 print("Prec:",round(svm_precision[best_index]*100,2))
 print("F1:",round(svm_fl_score[best_index]*100,2))
 
@@ -93,16 +81,14 @@ nb_fl_score = []
 
 from sklearn.naive_bayes import GaussianNB
 
-for train_index, test_index in kfold.split(X, y):
-    
-    classifier = GaussianNB()
-    classifier.fit(X_train, y_train)
-    y_pred = classifier.predict(X_test)
-    
-    nb_score.append(classifier.score(X_test, y_test))
-    nb_recall.append(metrics.recall_score(y_test, y_pred))
-    nb_precision.append(metrics.precision_score(y_test, y_pred))
-    nb_fl_score.append(metrics.f1_score(y_test, y_pred))
+classifier = GaussianNB()
+classifier.fit(X, y)
+y_pred = classifier.predict(X_test)
+
+nb_score.append(classifier.score(X_test, y_test))
+nb_recall.append(metrics.recall_score(y_test, y_pred))
+nb_precision.append(metrics.precision_score(y_test, y_pred))
+nb_fl_score.append(metrics.f1_score(y_test, y_pred))
 
 print("")
 print("=================Results=================")
@@ -129,35 +115,18 @@ knn_fl_score = []
 
 from sklearn.neighbors import KNeighborsClassifier
 
-for k in range(1, 101):
+for k in range(1, 30):
     
     print("Processing", k)
     classifier = KNeighborsClassifier(n_neighbors=k)
     
-    knn_k_score = []
-    knn_k_recall = []
-    knn_k_precision = []
-    knn_k_fl_score = []
-
-    for train_index, test_index in kfold.split(X, y):
-        
-        X_train = X.iloc[train_index][:1000]
-        y_train = y.iloc[train_index][:1000]
-        X_test = X.iloc[test_index]
-        y_test = y.iloc[test_index]
-        
-        classifier.fit(X_train, y_train)
-        y_pred = classifier.predict(X_test)
-        
-        knn_k_score.append(classifier.score(X_test, y_test))
-        knn_k_recall.append(metrics.recall_score(y_test, y_pred))
-        knn_k_precision.append(metrics.precision_score(y_test, y_pred))
-        knn_k_fl_score.append(metrics.f1_score(y_test, y_pred))
+    classifier.fit(X, y)
+    y_pred = classifier.predict(X_test)
     
-    knn_score.append(np.mean(knn_k_score))
-    knn_recall.append(np.mean(knn_k_recall))
-    knn_precision.append(np.mean(knn_k_precision))
-    knn_fl_score.append(np.mean(knn_k_fl_score))
+    knn_score.append(classifier.score(X_test, y_test))
+    knn_recall.append(metrics.recall_score(y_test, y_pred))
+    knn_precision.append(metrics.precision_score(y_test, y_pred))
+    knn_fl_score.append(metrics.f1_score(y_test, y_pred))
 
 print("")
 print("=================Results=================")
@@ -167,6 +136,7 @@ print("Presc:\t",knn_precision)
 print("F1:\t",knn_fl_score)
 print("")
 best_index = np.argmax(knn_score)
+print("Best N:", best_index+1)
 print("Score:", knn_score[best_index])
 print("Recall:", knn_recall[best_index])
 print("Prec:", knn_precision[best_index])
@@ -174,6 +144,7 @@ print("F1:", knn_fl_score[best_index])
 
 file = open(filename, "a")
 file.writelines("===kNN===\n")
+file.writelines("Best N:\t"+str(best_index+1) + "\n")
 file.writelines("Score:\t"+str(knn_score[best_index]) + "\n")
 file.writelines("Recall:\t"+str(knn_recall[best_index])+ "\n")
 file.writelines("Presc:\t"+str(knn_precision[best_index])+ "\n")

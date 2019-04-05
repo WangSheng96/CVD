@@ -15,7 +15,7 @@ for file_name in file_list:
     f1_scores = {}
     precision_scores = {}
     score_scores = {}
-    for k in range(1, 101):
+    for k in range(1, 2):
         print("processing", k)
         neigh = KNeighborsClassifier(n_neighbors=k)
         kf = KFold(n_splits=5)
@@ -39,13 +39,13 @@ for file_name in file_list:
             score = neigh.score(x_test, y_test)
             score_scores[k] = precision 
 
-    top_k_reacall = sorted(recall_scores.items(), key=lambda x:x[1], reverse=True)[:10]
+    top_k_recall = sorted(recall_scores.items(), key=lambda x:x[1], reverse=True)[:10]
     top_k_f1 = sorted(f1_scores.items(), key=lambda x:x[1], reverse=True)[:10]
     top_k_precision = sorted(precision_scores.items(), key=lambda x:x[1], reverse=True)[:10]
     top_k_score = sorted(score_scores.items(), key=lambda x:x[1], reverse=True)[:10]
     file = open("result_"+file_name+".json","w+")
     file.write("topk score")
-    file.write(json.dump(top_k_scores))
+    file.write(json.dumps(top_k_score))
     file.write("topk recall")
     file.write(json.dumps(top_k_recall))
     file.write("topk f1")

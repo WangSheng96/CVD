@@ -10,7 +10,7 @@ file_list = [
         "new_cardio"
 ]
 
-for file_name in file_list:
+for file_name in file_list: #Read all the data files and do calculation for each
     data = np.loadtxt(open(file_name+".csv", "rb"), delimiter=",", skiprows=1)
     x = data[:, :-1]
     y = data[:, -1:].astype(int).ravel()
@@ -18,9 +18,10 @@ for file_name in file_list:
     f1_scores = {}
     precision_scores = {}
     score_scores = {}
-    for k in range(100,2000,100):
+    for k in range(100,2000,100): #trying different estimator values 
         print("processing", k)
         neigh = xgb.XGBRegressor(objective ="binary:logistic", n_estimators = k, learning_rate=0.01)
+        #using KFold to validate the result
         kf = KFold(n_splits=5)
         kf.get_n_splits(x)
         for train_index, test_index in kf.split(x):
